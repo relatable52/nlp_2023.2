@@ -1,0 +1,11 @@
+---
+data_dir: "../data/atis_snips_v2"
+cache_dir: "../results/processed_data"
+model_dir: "../results/models"
+dataset_names:
+  - atis
+  - snips
+modes:
+  - dev
+  - test
+  - train

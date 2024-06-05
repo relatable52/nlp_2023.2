@@ -1,0 +1,11 @@
+---
+data_dir: "/kaggle/input/atis-snips/atis_snips_v2/atis"
+cache_dir: "..results/processed_data"
+models_dir: "..results/working/models"
+dataset_names:
+  - atis
+  - snips
+modes:
+  - dev
+  - test
+  - train
