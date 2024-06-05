@@ -1,7 +1,7 @@
 ---
-data_dir: "../data/atis_snips_v2"
-cache_dir: "../results/processed_data"
-model_dir: "../results/models"
+data_dir: "./data/atis_snips_v2"
+cache_dir: "./results/processed_data"
+model_dir: "./results/models"
 dataset_names:
   - atis
   - snips

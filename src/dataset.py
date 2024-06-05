@@ -112,7 +112,7 @@ class IntentDataset(Dataset):
     
 def get_args():
     parser = ArgumentParser()
-    parser.add_argument("--config_path", type=str, default="../config/local.yaml")
+    parser.add_argument("--config_path", type=str, default="./config/local.yaml")
     parser.add_argument("--max_len", type=int, default=60, help="Tokenizer's max length")
     args = parser.parse_args()
     return args
