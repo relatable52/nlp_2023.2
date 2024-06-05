@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from utils import load_config
+from src.utils import load_config
 from transformers import BertTokenizer
 from tqdm import tqdm
 import torch
