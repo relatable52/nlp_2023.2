@@ -7,10 +7,9 @@ import torch
 from torch.utils.data import Dataset
 from argparse import ArgumentParser
 
-MAX_LEN = 60
-
 class IntentDataset(Dataset):
-    def __init__(self, data_dir, set_name, mode, cache_dir):
+    def __init__(self, data_dir, set_name, mode, cache_dir, max_len=60):
+        self.max_len = max_len
         self.data_dir = data_dir
         self.cache_dir = cache_dir
         self.set_name = set_name
@@ -75,7 +74,7 @@ class IntentDataset(Dataset):
             input = tokenizer.encode_plus(
                 text = text,
                 add_special_tokens = True,
-                max_length = MAX_LEN,
+                max_length = self.max_len,
                 return_token_type_ids = False,
                 padding = 'max_length',
                 return_attention_mask = True,
@@ -108,9 +107,13 @@ class IntentDataset(Dataset):
         print("Done.")
         return ret
     
+    def getMaxlen(self):
+        return self.max_len
+    
 def get_args():
     parser = ArgumentParser()
     parser.add_argument("--config_path", type=str, default="../config/local.yaml")
+    parser.add_argument("--max_len", type=int, default=60, help="Tokenizer's max length")
     args = parser.parse_args()
     return args
 
@@ -121,8 +124,10 @@ if __name__ == "__main__":
     cache_dir = config["cache_dir"]
     dataset_names = config["dataset_names"]
     modes = config["modes"]
+    max_len = args.max_len
 
+    print("Using config: ", args.config_path)
     for set_name in dataset_names:
         for mode in modes:
             print(f"Loading dataset: {set_name}-{mode} ...")
-            IntentDataset(data_dir, set_name, mode, cache_dir)
+            IntentDataset(data_dir, set_name, mode, cache_dir, max_len)
