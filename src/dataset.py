@@ -5,6 +5,7 @@ from transformers import BertTokenizer
 from tqdm import tqdm
 import torch
 from torch.utils.data import Dataset
+from argparse import ArgumentParser
 
 MAX_LEN = 60
 
@@ -106,9 +107,16 @@ class IntentDataset(Dataset):
         ret = pd.DataFrame(data_dict)
         print("Done.")
         return ret
+    
+def get_args():
+    parser = ArgumentParser()
+    parser.add_argument("--config_path", type=str, default="../config/local.yaml")
+    args = parser.parse_args()
+    return args
 
 if __name__ == "__main__":
-    config = load_config("../config/local.yaml")
+    args = get_args()
+    config = load_config(args.config_path)
     data_dir = config["data_dir"]
     cache_dir = config["cache_dir"]
     dataset_names = config["dataset_names"]
