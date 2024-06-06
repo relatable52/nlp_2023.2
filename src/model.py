@@ -1,4 +1,4 @@
-from transformers import BertModel
+from transformers import AutoModel
 from torch import nn
 
 class IntentClassifier(nn.Module):
@@ -24,7 +24,7 @@ class SlotClassifier(nn.Module):
 class JointBertModel(nn.Module):
     def __init__(self, nintents, nslots):
         super(JointBertModel, self).__init__()
-        self.bert = BertModel.from_pretrained("google-bert/bert-base-uncased")
+        self.bert = AutoModel.from_pretrained("bert-base-uncased")
         self.intent_classifier = IntentClassifier(input_dim=self.bert.config.hidden_size, num_intent_labels=nintents, dropout_rate=0.05)
         self.slot_classifier = SlotClassifier(input_dim=self.bert.config.hidden_size, num_slot_labels=nslots, dropout_rate=0.05)
     def forward(self, input_ids, attention_mask):

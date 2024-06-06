@@ -1,7 +1,7 @@
 import pandas as pd
 import os
-from src.utils import load_config
-from transformers import BertTokenizer
+from src.utils import load_config, word_map
+from transformers import AutoTokenizer
 from tqdm import tqdm
 import torch
 from torch.utils.data import Dataset
@@ -15,7 +15,7 @@ class IntentDataset(Dataset):
         self.set_name = set_name
         self.mode = mode
         self.data = None
-        self.tokenizer = BertTokenizer.from_pretrained("google-bert/bert-base-uncased")
+        self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         self.save_dir = os.path.join(self.cache_dir, self.set_name)
         self.cache_path = os.path.join(self.save_dir, f"{self.mode}.pkl")
         self.nintents = 1
@@ -58,7 +58,7 @@ class IntentDataset(Dataset):
         print("Found cached data. Loading ...")
         data = pd.read_pickle(self.cache_path)
         print("Done.")
-        return data
+        return data 
     
     def process_data(self, data_dir, set_name, mode, tokenizer):
         print("No cached data found. Processing data ...")
@@ -71,33 +71,31 @@ class IntentDataset(Dataset):
         intent_list.sort()
         intent_dict = dict((intent_list[i], i) for i in range(len(intent_list)))
         intent = [intent_dict[i] for i in df.intent]
+
+        slot_list = pd.read_csv(slot_path).slot.to_list()
+        slot_list.sort(reverse=True)
+        slot_dict = dict((slot_list[i], i) for i in range(len(slot_list)))
         
         input_ids = []
         attention_mask = []
-        for text in tqdm(df.text):
-            input = tokenizer.encode_plus(
+        slot = []
+        for index, row in tqdm(df.iterrows()):
+            text = row["text"]
+            sl = row["slot"]
+            inputs = tokenizer(
                 text = text,
                 add_special_tokens = True,
                 return_token_type_ids = False,
-                padding = 'max_length',
+                padding = "max_length",
                 return_attention_mask = True,
                 truncation = True,
-                max_length = self.max_len
+                max_length = self.max_len,
+                return_offsets_mapping = True
             )
-            attention_mask.append(input['attention_mask'])
-            input_ids.append(input['input_ids'])
-
-        slot_list = pd.read_csv(slot_path).slot.to_list()
-        slot_list = list(slot_list)
-        slot_list.sort(reverse=True)
-        slot_dict = dict((slot_list[i], i) for i in range(len(slot_list)))
-        slot = [[slot_dict[i] for i in j.split()] for j in df.slot]
-        
-        for i in range(len(input_ids)):
-            for j in range(len(input_ids[i])):
-                token_id = input_ids[i][j]
-                if token_id in [100, 101, 102, 0] or tokenizer.decode(token_id)[0] == "#":
-                    slot[i].insert(j, slot_dict['O'])
+            attention_mask.append(inputs['attention_mask'])
+            input_ids.append(inputs['input_ids'])
+            map = word_map(text)
+            slot.append(slot_dict(sl.split()[map(i[1])]) if i(1) != 0 else slot_dict['O'] for i in inputs["offset_mapping"])
 
         self.nintents = len(intent_dict)
         self.nslots = len(slot_dict)
