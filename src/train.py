@@ -157,7 +157,7 @@ def main():
     config = load_config(args.config_path)
     data_dir = config["data_dir"]
     cache_dir = config["cache_dir"]
-    result_dir = config["result_dir"]
+    results_dir = config["result_dir"]
     epochs = args.epochs
     dataset = args.dataset
 
@@ -187,7 +187,7 @@ def main():
         num_training_steps=total_steps
     )
 
-    train(epochs, model, loss_fn, optimizer, train_dataset, test_dataset, TRAIN_PARAM, TEST_PARAM, device, scheduler, cache_dir, dataset)
+    train(epochs, model, loss_fn, optimizer, train_dataset, test_dataset, TRAIN_PARAM, TEST_PARAM, device, scheduler, results_dir, dataset)
 
 if __name__ == "__main__":
     main()
