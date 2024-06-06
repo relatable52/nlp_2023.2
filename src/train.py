@@ -157,7 +157,7 @@ def main():
     config = load_config(args.config_path)
     data_dir = config["data_dir"]
     cache_dir = config["cache_dir"]
-    results_dir = config["result_dir"]
+    results_dir = config["results_dir"]
     epochs = args.epochs
     dataset = args.dataset
 
