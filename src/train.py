@@ -22,7 +22,7 @@ def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_exa
     for d in tqdm(data_loader):
         input_ids = d["input_ids"].to(device)
         attention_mask = d["attention_mask"].to(device)
-        targets = d["targets"].to(device)
+        targets = d["target"].to(device)
         slots = d["slots"].to(device)
         
         output = model(input_ids, attention_mask)
