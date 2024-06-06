@@ -63,7 +63,7 @@ def eval_model(model, data_loader, loss_fn, device, n_examples, max_len):
         for d in data_loader:
             input_ids = d["input_ids"].to(device)
             attention_mask = d["attention_mask"].to(device)
-            targets = d["targets"].to(device)
+            targets = d["target"].to(device)
             slots = d["slots"].to(device)
             
             # Get model outputs
