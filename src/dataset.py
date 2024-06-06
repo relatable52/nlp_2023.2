@@ -61,9 +61,11 @@ class IntentDataset(Dataset):
     def process_data(self, data_dir, set_name, mode, tokenizer):
         print("No cached data found. Processing data ...")
         data_path = os.path.join(data_dir, set_name, f"{mode}.csv")
+        intent_path = os.path.join(data_dir, set_name, "intent_dict.csv")
+        slot_path = os.path.join(data_dir, set_name, "slot_dict.csv")
         df = pd.read_csv(data_path)
 
-        intent_list = list(df.intent.unique())
+        intent_list = pd.read_csv(intent_path).intent.to_list()
         intent_list.sort()
         intent_dict = dict((intent_list[i], i) for i in range(len(intent_list)))
         intent = [intent_dict[i] for i in df.intent]
@@ -83,13 +85,12 @@ class IntentDataset(Dataset):
             attention_mask.append(input['attention_mask'])
             input_ids.append(input['input_ids'])
 
-        slot_list = set()
-        for i in df.slot:
-            slot_list.update(i.split())
+        slot_list = pd.read_csv(slot_path).slot.to_list()
         slot_list = list(slot_list)
         slot_list.sort(reverse=True)
         slot_dict = dict((slot_list[i], i) for i in range(len(slot_list)))
         slot = [[slot_dict[i] for i in j.split()] for j in df.slot]
+        
         for i in range(len(input_ids)):
             for j in range(len(input_ids[i])):
                 token_id = input_ids[i][j]
