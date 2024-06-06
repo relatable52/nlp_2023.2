@@ -96,6 +96,7 @@ class IntentDataset(Dataset):
             input_ids.append(inputs['input_ids'])
             map = word_map(text)
             temp = [map[i[0]] for i in inputs["offset_mapping"]]
+            slot.append(temp)
 
         self.nintents = len(intent_dict)
         self.nslots = len(slot_dict)
