@@ -18,6 +18,8 @@ class IntentDataset(Dataset):
         self.tokenizer = BertTokenizer.from_pretrained("google-bert/bert-base-uncased")
         self.save_dir = os.path.join(self.cache_dir, self.set_name)
         self.cache_path = os.path.join(self.save_dir, f"{self.mode}.pkl")
+        self.nintents = 1
+        self.nslots = 1
 
         if self.has_cache():
             self.data = self.load()
@@ -97,6 +99,9 @@ class IntentDataset(Dataset):
                 if token_id in [100, 101, 102, 0] or tokenizer.decode(token_id)[0] == "#":
                     slot[i].insert(j, slot_dict['O'])
 
+        self.nintents = len(intent_dict)
+        self.nslots = len(slot_dict)
+
         data_dict = {
             'input_ids': input_ids,
             'attention_mask': attention_mask,
@@ -110,6 +115,9 @@ class IntentDataset(Dataset):
     
     def getMaxlen(self):
         return self.max_len
+    
+    def getIntentSlot(self):
+        return self.nintents, self.nslots
     
 def get_args():
     parser = ArgumentParser()

@@ -3,10 +3,15 @@ from sklearn.metrics import confusion_matrix, classification_report, precision_r
 from transformers import AdamW, get_linear_schedule_with_warmup
 import torch
 import numpy as np
+import pandas as pd
 import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from dataset import IntentDataset
+from src.utils import load_config
+from argparse import ArgumentParser
+from src.model import JointBertModel
+from tqdm import tqdm
 
 def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_examples, max_len):
     model = model.train()
@@ -14,7 +19,7 @@ def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_exa
     correct_intent = 0
     correct_slot = 0
     
-    for d in data_loader:
+    for d in tqdm(data_loader):
         input_ids = d["input_ids"].to(device)
         attention_mask = d["attention_mask"].to(device)
         targets = d["targets"].to(device)
@@ -24,8 +29,8 @@ def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_exa
         intent_logits = output['intent']
         slot_logits = output['slot']
         
-        intent_loss = loss_fn(intent_logits.view(-1, 26), targets.view(-1))
-        slot_loss = loss_fn(slot_logits.view(-1,129), slots.view(-1))
+        intent_loss = loss_fn(intent_logits.flatten(), targets.flatten())
+        slot_loss = loss_fn(slot_logits.flatten(), slots.flatten())
         loss = slot_loss+intent_loss
         
         _, intent = torch.max(intent_logits, dim=1)
@@ -47,6 +52,7 @@ def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_exa
     return correct_intent.double()/n_examples, correct_slot.double()/n_examples/max_len, np.mean(losses)
 
 def eval_model(model, data_loader, loss_fn, device, n_examples, max_len):
+    print("Evaluating model...")
     model = model.eval()
     
     losses = []
@@ -124,13 +130,64 @@ def train(epochs, model, loss_fn, optimizer, train_dataset, val_dataset, train_p
         history['val_loss'].append(val_loss)
         
         # Checkpoint for saving models
-        checkpoint = os.path.join(save_dir, set_name)
+        save_path = os.path.join(save_dir, set_name)
+        checkpoint = os.path.join(save_path, "models")
         if not os.path.exists(checkpoint):
             os.makedirs(checkpoint)
 
         # If we beat prev performance
         if val_intent_acc > best_accuracy:
-            torch.save(model.state_dict(), os.path.join(save_dir, 'best.pt'))
+            torch.save(model.state_dict(), os.path.join(checkpoint, 'best.pt'))
             best_accuracy = val_intent_acc
             
-    torch.save(model.state_dict(), os.path.join(save_dir, 'last.pt'))
+    torch.save(model.state_dict(), os.path.join(checkpoint, 'last.pt'))
+    history = pd.DataFrame(history)
+    history.to_csv(save_dir)
+
+def get_args():
+    parser = ArgumentParser()
+    parser.add_argument("--config_path", type=str, default="./config/local.yaml")
+    parser.add_argument("--epochs", type=int, default=16)
+    parser.add_argument("--dataset", type=str, default="atis")
+    args = parser.parse_args()
+    return args
+
+def main():
+    args = get_args()
+    config = load_config(args.config_path)
+    data_dir = config["data_dir"]
+    cache_dir = config["cache_dir"]
+    result_dir = config["result_dir"]
+    epochs = args.epochs
+    dataset = args.dataset
+
+    TRAIN_PARAM = {"batch_size":10, "shuffle":True, "num_workers":2}
+    TEST_PARAM = {"batch_size":10, "shuffle":True, "num_workers":2}
+
+    train_dataset = IntentDataset(data_dir, dataset, "train", cache_dir)
+    test_dataset = IntentDataset(data_dir, dataset, "test", cache_dir)
+
+    nintents, nslots = train_dataset.getIntentSlot()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = JointBertModel(nintents, nslots)
+
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        model = nn.DataParallel(model)
+
+    model
+    loss_fn = torch.nn.CrossEntropyLoss()
+    optimizer = AdamW(model.parameters(), lr=1e-5, correct_bias=False)
+    total_steps = (len(train_dataset)//TRAIN_PARAM["batch_size"]+1) * epochs
+
+    scheduler = get_linear_schedule_with_warmup(
+        optimizer,
+        num_warmup_steps=0,
+        num_training_steps=total_steps
+    )
+
+    train(epochs, model, loss_fn, optimizer, train_dataset, test_dataset, TRAIN_PARAM, TEST_PARAM, device, scheduler, cache_dir, dataset)
+
+if __name__ == "__main__":
+    main()
