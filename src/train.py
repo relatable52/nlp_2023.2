@@ -7,7 +7,7 @@ import pandas as pd
 import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
-from dataset import IntentDataset
+from src.dataset import IntentDataset
 from src.utils import load_config
 from argparse import ArgumentParser
 from src.model import JointBertModel
