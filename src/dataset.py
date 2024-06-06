@@ -31,8 +31,8 @@ class IntentDataset(Dataset):
         return len(self.data)
     
     def __getitem__(self, index):
-        input_ids = torch.tensor(self.data.input_ids[index], dtype=torch.long).flatten()
-        attention_mask = torch.tensor(self.data.attention_mask[index], dtype=torch.long).flatten()
+        input_ids = torch.tensor(self.data.input_ids[index])
+        attention_mask = torch.tensor(self.data.attention_mask[index])
         target = torch.tensor(self.data.target[index])
         slot = torch.tensor(self.data.slot)
         return {
