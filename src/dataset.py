@@ -78,11 +78,11 @@ class IntentDataset(Dataset):
             input = tokenizer.encode_plus(
                 text = text,
                 add_special_tokens = True,
-                max_length = self.max_len,
                 return_token_type_ids = False,
                 padding = 'max_length',
                 return_attention_mask = True,
-                truncation = True
+                truncation = True,
+                max_length = self.max_len
             )
             attention_mask.append(input['attention_mask'])
             input_ids.append(input['input_ids'])
