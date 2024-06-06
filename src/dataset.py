@@ -95,7 +95,7 @@ class IntentDataset(Dataset):
             attention_mask.append(inputs['attention_mask'])
             input_ids.append(inputs['input_ids'])
             map = word_map(text)
-            temp = [sl[map[i(1)]] for i in inputs["offset_mapping"]]
+            temp = [sl[map[i[1]]] for i in inputs["offset_mapping"]]
 
         self.nintents = len(intent_dict)
         self.nslots = len(slot_dict)
