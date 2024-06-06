@@ -23,7 +23,7 @@ def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_exa
         input_ids = d["input_ids"].to(device)
         attention_mask = d["attention_mask"].to(device)
         targets = d["target"].to(device)
-        slots = d["slots"].to(device)
+        slots = d["slot"].to(device)
         
         output = model(input_ids, attention_mask)
         intent_logits = output['intent']
@@ -64,7 +64,7 @@ def eval_model(model, data_loader, loss_fn, device, n_examples, max_len):
             input_ids = d["input_ids"].to(device)
             attention_mask = d["attention_mask"].to(device)
             targets = d["target"].to(device)
-            slots = d["slots"].to(device)
+            slots = d["slot"].to(device)
             
             # Get model outputs
             output = model(input_ids, attention_mask)
