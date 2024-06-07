@@ -18,8 +18,6 @@ class IntentDataset(Dataset):
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         self.save_dir = os.path.join(self.cache_dir, self.set_name)
         self.cache_path = os.path.join(self.save_dir, f"{self.mode}.pkl")
-        self.nintents = 1
-        self.nslots = 1
 
         if self.has_cache():
             self.data = self.load()
@@ -102,9 +100,6 @@ class IntentDataset(Dataset):
             temp = [slot_dict[i] for i in temp]
             slot.append(temp)
 
-        self.nintents = len(intent_dict)
-        self.nslots = len(slot_dict)
-
         data_dict = {
             'input_ids': input_ids,
             'attention_mask': attention_mask,
@@ -120,7 +115,11 @@ class IntentDataset(Dataset):
         return self.max_len
     
     def getIntentSlot(self):
-        return self.nintents, self.nslots
+        intent_path = os.path.join(data_dir, set_name, "intent_dict.csv")
+        slot_path = os.path.join(data_dir, set_name, "slot_dict.csv")
+        intent_list = pd.read_csv(intent_path).intent.to_list()
+        slot_list = pd.read_csv(slot_path).slot.to_list()
+        return len(intent_list), len(slot_list)
     
 def get_args():
     parser = ArgumentParser()
