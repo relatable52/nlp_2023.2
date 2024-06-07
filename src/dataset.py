@@ -119,6 +119,7 @@ class IntentDataset(Dataset):
         slot_path = os.path.join(data_dir, set_name, "slot_dict.csv")
         intent_list = pd.read_csv(intent_path).intent.to_list()
         slot_list = pd.read_csv(slot_path).slot.to_list()
+        print(len(intent_list), len(slot_list))
         return len(intent_list), len(slot_list)
     
 def get_args():
