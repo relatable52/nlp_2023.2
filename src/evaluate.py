@@ -117,7 +117,7 @@ def evaluate_then_save(model, data_loader, set_name, save_dir):
     slot_df.to_csv(os.path.join(save_dir, "slot_report.csv"))
 
     print("Confusion matrix:")
-    show_confusion_matrix(slot_df_cm, "Slots confusion matrix", "slot_cm.pdf")
+    show_confusion_matrix(slot_df_cm, save_path, "Slots confusion matrix", "slot_cm.pdf")
     slot_df_cm.to_csv(os.path.join(save_path, "slot_cm.csv"))
 
 
