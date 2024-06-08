@@ -141,8 +141,18 @@ def train(epochs, model, loss_fn, optimizer, train_dataset, val_dataset, train_p
             best_accuracy = val_intent_acc
             
     torch.save(model.state_dict(), os.path.join(checkpoint, 'last.pt'))
-    history = pd.DataFrame(history.cpu())
-    history.to_csv(save_dir)
+    
+    train_acc = [float(i.cpu()) for i in history['train_acc']]
+    val_acc = [float(i.cpu()) for i in history['val_acc']]
+    train_loss = [float(i) for i in history['train_loss']]
+    val_loss = [float(i) for i in history['val_loss']]
+    his_df = pd.DataFrame({
+        "train_acc": train_acc,
+        "val_acc": val_acc, 
+        "train_loss": train_loss, 
+        "val_loss": val_loss
+    })
+    his_df.to_csv(os.path.join(save_path, "training_log.csv"))
 
 def get_args():
     parser = ArgumentParser()
