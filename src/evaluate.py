@@ -134,7 +134,7 @@ def main():
     nintents, nslots = test_dataset.getIntentSlot()
     model = JointBertModel(nintents, nslots)
 
-    model_path = os.path.join(save_dir, args.set_name, "last.pt")
+    model_path = os.path.join(save_dir, args.set_name, "models", "last.pt")
     model.load_state_dict(torch.load(model_path))
 
     PARAM = {"batch_size":10, "shuffle":True, "num_workers":2}
