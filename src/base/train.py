@@ -7,10 +7,10 @@ import pandas as pd
 import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
-from src.dataset import IntentDataset
+from src.base.dataset import IntentDataset
 from src.utils import load_config
 from argparse import ArgumentParser
-from src.model import JointBertModel
+from src.base.model import JointBertModel
 from tqdm import tqdm
 
 def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_examples, max_len):
