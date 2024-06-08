@@ -22,7 +22,7 @@ class IntentDataset(Dataset):
         if self.has_cache():
             self.data = self.load()
         else:
-            self.data = self.process_data(data_dir, set_name, mode, self.tokenizer)
+            self.data = self.process_data(self.data_dir, set_name, mode, self.tokenizer)
             self.save()
 
     def __len__(self):
