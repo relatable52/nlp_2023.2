@@ -24,6 +24,7 @@ def get_predictions(model, data_loader):
     model = model.eval()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
 
     intent_predictions = []
     intent_prediction_probs = []
