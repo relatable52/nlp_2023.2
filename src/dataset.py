@@ -99,7 +99,7 @@ class IntentDataset(Dataset):
             #     if (token in [100, 101, 102, 0]):
             #         temp1[ind] = 'O'
 
-            #temp2 = [slot_dict[i] for i in temp1]
+            # temp2 = [slot_dict[i] for i in temp1]
             slot.append(temp1)
 
         data_dict = {
