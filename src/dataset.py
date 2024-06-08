@@ -32,7 +32,7 @@ class IntentDataset(Dataset):
         input_ids = torch.tensor(self.data.input_ids[index])
         attention_mask = torch.tensor(self.data.attention_mask[index])
         target = torch.tensor(self.data.target[index])
-        slot = self.data.slot[index]
+        slot = torch.tensor(self.data.slot[index])
         return {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
