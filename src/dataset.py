@@ -94,13 +94,13 @@ class IntentDataset(Dataset):
             input_ids.append(inputs['input_ids'])
             map = word_map(text)
             temp1 = [sl[map[i[0]]] for i in inputs["offset_mapping"]]
-            
+
             for ind, token in enumerate(inputs['input_ids']):
                 if (token in [100, 101, 102, 0]):
                     temp1[ind] = 'O'
 
-            temp2 = [slot_dict[i] for i in temp1]
-            slot.append(temp2)
+            # temp2 = [slot_dict[i] for i in temp1]
+            slot.append(temp1)
 
         data_dict = {
             'input_ids': input_ids,
