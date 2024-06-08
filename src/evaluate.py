@@ -99,7 +99,7 @@ def evaluate_then_save(model, data_loader, set_name, save_dir):
     intent_df.to_csv(os.path.join(save_path, "intent_report.csv"))
     
     print("Confusion matrix:")
-    show_confusion_matrix(intent_df_cm)
+    show_confusion_matrix(intent_df_cm, save_path, "Intents confusion matrix", "intent_cm.pdf")
     intent_df_cm.to_csv(os.path.join(save_path, "intent_cm.csv"))
 
     y_slot_pred_flat = y_slot_pred.view(-1)
@@ -117,7 +117,7 @@ def evaluate_then_save(model, data_loader, set_name, save_dir):
     slot_df.to_csv(os.path.join(save_dir, "slot_report.csv"))
 
     print("Confusion matrix:")
-    show_confusion_matrix(slot_df_cm)
+    show_confusion_matrix(slot_df_cm, "Slots confusion matrix", "slot_cm.pdf")
     slot_df_cm.to_csv(os.path.join(save_path, "slot_cm.csv"))
 
 
