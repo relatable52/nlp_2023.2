@@ -138,7 +138,7 @@ def main():
     PARAM = {"batch_size":10, "shuffle":True, "num_workers":2}
     test_dataloader = DataLoader(test_dataset, **PARAM)
 
-    evaluate_then_save(model, test_dataloader, args.set_name, os.path.join(save_dir, args.set_name))
+    evaluate_then_save(model, test_dataloader, args.set_name, save_dir)
 
 if __name__ == "__main__":
     main()
