@@ -29,14 +29,14 @@ def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_exa
         intent_logits = output['intent']
         slot_logits = output['slot']
         
-        intent_loss = loss_fn(intent_logits.flatten(), targets.flatten())
-        slot_loss = loss_fn(slot_logits.flatten(), slots.flatten())
+        intent_loss = loss_fn(intent_logits, targets)
+        slot_loss = loss_fn(slot_logits.flatten(0, 1), slots.flatten(0, 1))
         loss = slot_loss+intent_loss
         
         _, intent = torch.max(intent_logits, dim=1)
         correct_intent += torch.sum(intent == targets)
-        _, slot = torch.max(slot_logits.view(-1, 129), dim=1)
-        correct_slot += torch.sum(slot == slots.view(-1))
+        _, slot = torch.max(slot_logits.flatten(0, 1), dim=1)
+        correct_slot += torch.sum(slot == slots.flatten(0, 1))
         
         losses.append(loss.item())
         
@@ -71,14 +71,14 @@ def eval_model(model, data_loader, loss_fn, device, n_examples, max_len):
             intent_logits = output['intent']
             slot_logits = output['slot']
             
-            intent_loss = loss_fn(intent_logits.view(-1, 26), targets.view(-1))
-            slot_loss = loss_fn(slot_logits.view(-1,129), slots.view(-1))
+            intent_loss = loss_fn(intent_logits, targets)
+            slot_loss = loss_fn(slot_logits.flatten(0,1), slots.flatten(0,1))
             loss = slot_loss+intent_loss
             
             _, intent = torch.max(intent_logits, dim=1)
             correct_intent += torch.sum(intent == targets)
-            _, slot = torch.max(slot_logits.view(-1, 129), dim=1)
-            correct_slot += torch.sum(slot == slots.view(-1))
+            _, slot = torch.max(slot_logits.flatten(0, 1), dim=1)
+            correct_slot += torch.sum(slot == slots.flatten(0, 1))
             
             losses.append(loss.item())
             
