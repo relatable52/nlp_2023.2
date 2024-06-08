@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from src.utils import load_config
+from src.utils import load_config, mod_state_dict
 import torch
 import pandas as pd
 import numpy as np
@@ -135,7 +135,7 @@ def main():
     model = JointBertModel(nintents, nslots)
 
     model_path = os.path.join(save_dir, args.set_name, "models", "last.pt")
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(mod_state_dict(torch.load(model_path)))
 
     PARAM = {"batch_size":10, "shuffle":True, "num_workers":2}
     test_dataloader = DataLoader(test_dataset, **PARAM)
