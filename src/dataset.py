@@ -115,8 +115,8 @@ class IntentDataset(Dataset):
         return self.max_len
     
     def getIntentSlot(self):
-        intent_path = os.path.join(self.data_dir, set_name, "intent_dict.csv")
-        slot_path = os.path.join(self.data_dir, set_name, "slot_dict.csv")
+        intent_path = os.path.join(self.data_dir, self.set_name, "intent_dict.csv")
+        slot_path = os.path.join(self.data_dir, self.set_name, "slot_dict.csv")
         intent_list = pd.read_csv(intent_path).intent.to_list()
         slot_list = pd.read_csv(slot_path).slot.to_list()
         print(len(intent_list), len(slot_list))
