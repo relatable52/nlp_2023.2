@@ -113,7 +113,7 @@ def evaluate_then_save(model, data_loader, set_name, save_dir):
     slot_df_cm = pd.DataFrame(slot_cm, index=slot_test_labels, columns=slot_test_labels)
 
     print("Slot report:")
-    print(slot_report)
+    print(slot_df)
     slot_df.to_csv(os.path.join(save_dir, "slot_report.csv"))
 
     print("Confusion matrix:")
