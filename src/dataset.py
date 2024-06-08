@@ -93,12 +93,14 @@ class IntentDataset(Dataset):
             attention_mask.append(inputs['attention_mask'])
             input_ids.append(inputs['input_ids'])
             map = word_map(text)
-            temp = [sl[map[i[0]]] for i in inputs["offset_mapping"]]
-            for i in range(len(inputs["input_ids"])):
-                if(inputs["input_ids"] in [100, 101, 102, 0]):
-                    temp = ['O']
-            temp = [slot_dict[i] for i in temp]
-            slot.append(temp)
+            temp1 = [sl[map[i[0]]] for i in inputs["offset_mapping"]]
+            
+            for ind, token in enumerate(inputs['input_ids']):
+                if (token in [100, 101, 102, 0]):
+                    temp1[ind] = 'O'
+
+            temp2 = [slot_dict[i] for i in temp1]
+            slot.append(temp2)
 
         data_dict = {
             'input_ids': input_ids,
@@ -119,7 +121,6 @@ class IntentDataset(Dataset):
         slot_path = os.path.join(self.data_dir, self.set_name, "slot_dict.csv")
         intent_list = pd.read_csv(intent_path).intent.to_list()
         slot_list = pd.read_csv(slot_path).slot.to_list()
-        print(len(intent_list), len(slot_list))
         return len(intent_list), len(slot_list)
     
 def get_args():
