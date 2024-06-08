@@ -141,7 +141,7 @@ def train(epochs, model, loss_fn, optimizer, train_dataset, val_dataset, train_p
             best_accuracy = val_intent_acc
             
     torch.save(model.state_dict(), os.path.join(checkpoint, 'last.pt'))
-    history = pd.DataFrame(history)
+    history = pd.DataFrame(history.cpu())
     history.to_csv(save_dir)
 
 def get_args():
