@@ -25,7 +25,6 @@ def get_predictions(model, data_loader):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    queries = []
     intent_predictions = []
     intent_prediction_probs = []
     slot_predictions = []
@@ -35,11 +34,10 @@ def get_predictions(model, data_loader):
 
     with torch.no_grad():
         for d in data_loader:
-            texts = d["query"]
             input_ids = d["input_ids"].to(device)
             attention_mask = d["attention_mask"].to(device)
-            intent_targets = d["targets"].to(device)
-            slot_targets = d["slots"].to(device)
+            intent_targets = d["target"].to(device)
+            slot_targets = d["slot"].to(device)
 
             # Get outouts
             outputs = model(
@@ -53,7 +51,6 @@ def get_predictions(model, data_loader):
             # Slot filling predictions
             _, slot_pred = torch.max(outputs['slot'], dim=2)
 
-            queries.extend(texts)
             intent_predictions.extend(intent_pred)
             intent_prediction_probs.extend(outputs['intent'])
             slot_predictions.extend(slot_pred)
@@ -68,7 +65,7 @@ def get_predictions(model, data_loader):
     real_intent_values = torch.stack(real_intent_values).cpu()
     real_slot_values = torch.stack(real_slot_values).cpu()
 
-    return queries, intent_predictions, intent_prediction_probs, slot_predictions, slot_prediction_probs, real_intent_values, real_slot_values
+    return intent_predictions, intent_prediction_probs, slot_predictions, slot_prediction_probs, real_intent_values, real_slot_values
 
 def show_confusion_matrix(intent_confusion_matrix, save_dir, title, name):
     plt.figure(figsize=(10, 7))
@@ -83,7 +80,7 @@ def show_confusion_matrix(intent_confusion_matrix, save_dir, title, name):
 
 def evaluate_then_save(model, data_loader, set_name, save_dir):
     save_path = os.path.join(save_dir, set_name)
-    y_review_texts, y_intent_pred, y_intent_pred_probs, y_slot_pred, y_slot_pred_probs, y_intent_test, y_slot_test = get_predictions(
+    y_intent_pred, y_intent_pred_probs, y_slot_pred, y_slot_pred_probs, y_intent_test, y_slot_test = get_predictions(
         model,
         data_loader
     )
