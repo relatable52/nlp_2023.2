@@ -12,6 +12,7 @@ from src.utils import load_config
 from argparse import ArgumentParser
 from src.base.model import JointBertModel
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 def train_epoch(model, data_loader, loss_fn, optimizer, device, scheduler, n_examples, max_len):
     model = model.train()
@@ -153,6 +154,29 @@ def train(epochs, model, loss_fn, optimizer, train_dataset, val_dataset, train_p
         "val_loss": val_loss
     })
     his_df.to_csv(os.path.join(save_path, "training_log.csv"))
+    
+    # Plot training and validation accuracy
+    plt.plot(his_df.train_acc, label='train accuracy')
+    plt.plot(his_df.val_acc, label='validation accuracy')
+
+    # Graph chars
+    plt.title('Training history')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend()
+    plt.ylim([0, 1]);
+    plt.savefig(os.path.join(save_path, "accuracy.pdf"))
+
+    # Plot training and validation loss
+    plt.plot(train_loss, label='train loss')
+    plt.plot(val_loss, label='validation loss')
+
+    # Graph chars
+    plt.title('Training history')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend()
+    plt.savefig(os.path.join(save_path, "loss.pdf"))
 
 def get_args():
     parser = ArgumentParser()

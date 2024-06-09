@@ -124,7 +124,6 @@ def evaluate_then_save(model, data_loader, set_name, test_set, save_dir):
     show_confusion_matrix(slot_df_cm, save_path, "Slots confusion matrix", "slot_cm.pdf")
     slot_df_cm.to_csv(os.path.join(save_path, "slot_cm.csv"))
 
-
 def main():
     args = get_args()
     config = load_config(args.config_path)
@@ -158,14 +157,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
