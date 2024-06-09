@@ -103,7 +103,7 @@ def train(epochs, model, intent_loss_fn, slot_loss_fn, optimizer, train_dataset,
         intent_acc, slot_acc, train_loss = train_epoch(
             model,
             train_loader,
-            intent_loss_fn
+            intent_loss_fn,
             slot_loss_fn,
             optimizer,
             device,
