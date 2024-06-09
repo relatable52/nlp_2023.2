@@ -35,7 +35,7 @@ def train_epoch(model, data_loader, intent_loss_fn, slot_loss_fn, optimizer, dev
         loss = slot_loss+intent_loss
         
         intent = torch.where(F.sigmoid(intent_logits)>0.5, 1.0, 0.0)
-        correct_intent += torch.sum(intent == targets)
+        correct_intent += torch.sum(intent.flatten() == targets.flatten())/intent_logits.shape[1]
         _, slot = torch.max(slot_logits.flatten(0, 1), dim=1)
         correct_slot += torch.sum(slot == slots.flatten(0, 1))
         
@@ -77,7 +77,7 @@ def eval_model(model, data_loader, intent_loss_fn, slot_loss_fn, device, n_examp
             loss = slot_loss+intent_loss
             
             intent = torch.where(F.sigmoid(intent_logits)>0.5, 1.0, 0.0)
-            correct_intent += torch.sum(intent == targets)
+            correct_intent += torch.sum(intent.flatten() == targets.flatten())/intent_logits.shape[1]
             _, slot = torch.max(slot_logits.flatten(0, 1), dim=1)
             correct_slot += torch.sum(slot == slots.flatten(0, 1))
             

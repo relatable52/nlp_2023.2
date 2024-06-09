@@ -12,12 +12,13 @@ from sklearn.metrics import (
 )
 from src.base.dataset import IntentDataset
 from src.base.model import JointBertModel
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, ConcatDataset
 
 def get_args():
     parser = ArgumentParser()
     parser.add_argument("--config_path", type=str, default="./config/local.yaml")
     parser.add_argument("--set_name", type=str, default="atis")
+    parser.add_argument("--test_set", type=str, default="test")
     return parser.parse_args()
 
 def get_predictions(model, data_loader):
@@ -79,8 +80,8 @@ def show_confusion_matrix(intent_confusion_matrix, save_dir, title, name):
     plt.savefig(os.path.join(save_dir, name))
     plt.show()
 
-def evaluate_then_save(model, data_loader, set_name, save_dir):
-    save_path = os.path.join(save_dir, set_name)
+def evaluate_then_save(model, data_loader, set_name, test_set, save_dir):
+    save_path = os.path.join(save_dir, set_name, test_set)
     y_intent_pred, y_intent_pred_probs, y_slot_pred, y_slot_pred_probs, y_intent_test, y_slot_test = get_predictions(
         model,
         data_loader
@@ -132,6 +133,18 @@ def main():
     save_dir = config["results_dir"]
 
     test_dataset = IntentDataset(data_dir, args.set_name, "test", cache_dir)
+    dev_dataset = IntentDataset(data_dir, args.set_name, "dev", cache_dir)
+    both_dataset = ConcatDataset([test_dataset, dev_dataset])
+
+    if(args.test_set == "test"):
+        dataset = test_dataset
+    elif(args.test_set == "dev"):
+        dataset = dev_dataset
+    elif(args.test_set == "combine"):
+        dataset = both_dataset
+    else:
+        raise NotImplementedError
+
     nintents, nslots = test_dataset.getIntentSlot()
     model = JointBertModel(nintents, nslots)
 
@@ -139,9 +152,9 @@ def main():
     model.load_state_dict(mod_state_dict(torch.load(model_path)))
 
     PARAM = {"batch_size":10, "shuffle":True, "num_workers":2}
-    test_dataloader = DataLoader(test_dataset, **PARAM)
+    dataloader = DataLoader(dataset, **PARAM)
 
-    evaluate_then_save(model, test_dataloader, args.set_name, save_dir)
+    evaluate_then_save(model, dataloader, args.set_name, args.test_set, save_dir)
 
 if __name__ == "__main__":
     main()
