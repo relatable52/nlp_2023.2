@@ -86,7 +86,10 @@ def evaluate_then_save(model, data_loader, set_name, save_dir):
         data_loader
     )
 
-    intent_report = classification_report(y_intent_test, y_intent_pred, output_dict=True)
+    intent_list = pd.read_csv(os.path.joint("./data/atis_snips_v2/", set_name, "intent_dict.csv")).intent.to_list()
+    slot_list = pd.read_csv(os.path.joint("./data/atis_snips_v2/", set_name, "slot_dict.csv")).slot.to_list()
+
+    intent_report = classification_report(y_intent_test, y_intent_pred, target_names=intent_list, output_dict=True)
     intent_df = pd.DataFrame(intent_report).transpose()
 
     intent_test_labels = pd.DataFrame(y_intent_test.numpy())
@@ -104,7 +107,7 @@ def evaluate_then_save(model, data_loader, set_name, save_dir):
 
     y_slot_pred_flat = y_slot_pred.view(-1)
     y_slot_test_flat = y_slot_test.view(-1)
-    slot_report = classification_report(y_slot_test_flat, y_slot_pred_flat, output_dict=True)
+    slot_report = classification_report(y_slot_test_flat, y_slot_pred_flat, target_names=slot_list, output_dict=True)
     slot_df = pd.DataFrame(slot_report).transpose()
     
     slot_test_labels = pd.DataFrame(y_slot_test.numpy())
