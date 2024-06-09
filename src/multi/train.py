@@ -170,6 +170,7 @@ def train(epochs, model, intent_loss_fn, slot_loss_fn, optimizer, train_dataset,
     plt.legend()
     plt.ylim([0, 1]);
     plt.savefig(os.path.join(save_path, "multi_accuracy.pdf"))
+    plt.show()
 
     # Plot training and validation loss
     plt.plot(train_loss, label='train loss')
@@ -181,6 +182,7 @@ def train(epochs, model, intent_loss_fn, slot_loss_fn, optimizer, train_dataset,
     plt.xlabel('Epoch')
     plt.legend()
     plt.savefig(os.path.join(save_path, "multi_loss.pdf"))
+    plt.show()
 
 def get_args():
     parser = ArgumentParser()
