@@ -82,6 +82,9 @@ def show_confusion_matrix(intent_confusion_matrix, save_dir, title, name):
 
 def evaluate_then_save(model, data_loader, set_name, test_set, save_dir):
     save_path = os.path.join(save_dir, set_name, test_set)
+    if(not os.path.exists(save_path)):
+        os.makedirs(save_path)
+    
     y_intent_pred, y_intent_pred_probs, y_slot_pred, y_slot_pred_probs, y_intent_test, y_slot_test = get_predictions(
         model,
         data_loader
