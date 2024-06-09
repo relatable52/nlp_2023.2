@@ -78,7 +78,8 @@ def show_confusion_matrix(intent_confusion_matrix, save_dir, title, name):
     plt.ylabel('True Label')
     plt.xlabel('Predicted Label')
     plt.savefig(os.path.join(save_dir, name))
-    plt.show()
+    plt.close()
+    plt.clf()
 
 def evaluate_then_save(model, data_loader, set_name, test_set, save_dir):
     save_path = os.path.join(save_dir, set_name, test_set)

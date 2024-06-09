@@ -166,11 +166,12 @@ def train(epochs, model, loss_fn, optimizer, train_dataset, val_dataset, train_p
     plt.legend()
     plt.ylim([0, 1]);
     plt.savefig(os.path.join(save_path, "accuracy.pdf"))
-    plt.show()
+    plt.close()
+    plt.clf()
 
     # Plot training and validation loss
-    plt.plot(train_loss, label='train loss')
-    plt.plot(val_loss, label='validation loss')
+    plt.plot(his_df.train_loss, label='train loss')
+    plt.plot(his_df.val_loss, label='validation loss')
 
     # Graph chars
     plt.title('Training history')
@@ -178,7 +179,8 @@ def train(epochs, model, loss_fn, optimizer, train_dataset, val_dataset, train_p
     plt.xlabel('Epoch')
     plt.legend()
     plt.savefig(os.path.join(save_path, "loss.pdf"))
-    plt.show()
+    plt.close()
+    plt.clf()
 
 def get_args():
     parser = ArgumentParser()
