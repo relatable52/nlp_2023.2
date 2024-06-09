@@ -10,8 +10,8 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix
 )
-from src.dataset import IntentDataset
-from src.model import JointBertModel
+from src.base.dataset import IntentDataset
+from src.base.model import JointBertModel
 from torch.utils.data import DataLoader
 
 def get_args():
@@ -114,7 +114,7 @@ def evaluate_then_save(model, data_loader, set_name, save_dir):
 
     print("Slot report:")
     print(slot_df)
-    slot_df.to_csv(os.path.join(save_dir, "slot_report.csv"))
+    slot_df.to_csv(os.path.join(save_path, "slot_report.csv"))
 
     print("Confusion matrix:")
     show_confusion_matrix(slot_df_cm, save_path, "Slots confusion matrix", "slot_cm.pdf")
