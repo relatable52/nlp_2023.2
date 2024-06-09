@@ -87,8 +87,8 @@ def evaluate_then_save(model, data_loader, set_name, test_set, save_dir):
         data_loader
     )
 
-    intent_list = pd.read_csv(os.path.joint("./data/atis_snips_v2/", set_name, "intent_dict.csv")).intent.to_list()
-    slot_list = pd.read_csv(os.path.joint("./data/atis_snips_v2/", set_name, "slot_dict.csv")).slot.to_list()
+    intent_list = pd.read_csv(os.path.join("./data/atis_snips_v2/", set_name, "intent_dict.csv")).intent.to_list()
+    slot_list = pd.read_csv(os.path.join("./data/atis_snips_v2/", set_name, "slot_dict.csv")).slot.to_list()
 
     intent_report = classification_report(y_intent_test, y_intent_pred, target_names=intent_list, output_dict=True)
     intent_df = pd.DataFrame(intent_report).transpose()
