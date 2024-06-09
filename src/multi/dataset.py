@@ -127,7 +127,7 @@ class MultiIntentDataset(Dataset):
         return self.max_len
     
     def getIntentSlot(self):
-        intent_path = os.path.join(self.data_dir, self.set_name, "intent_dict.csv")
+        intent_path = os.path.join(self.data_dir, self.set_name, "single_intent_dict.csv")
         slot_path = os.path.join(self.data_dir, self.set_name, "slot_dict.csv")
         intent_list = pd.read_csv(intent_path).intent.to_list()
         slot_list = pd.read_csv(slot_path).slot.to_list()
